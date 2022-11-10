@@ -8,16 +8,17 @@ import javax.swing.table.DefaultTableModel;
 
 public class DialogBuscarAutor extends javax.swing.JDialog {
 
-       DefaultTableModel modelo = new DefaultTableModel();
-       Autor autorSelec = new Autor();
+    DefaultTableModel modelo = new DefaultTableModel();
+    Autor autorSelec = new Autor();
+
     public DialogBuscarAutor() {
-        super(FrmPrincipal.getInstancia(),true);
+        super(FrmPrincipal.getInstancia(), true);
         setLocationRelativeTo(null);
         initComponents();
         try {
-               AutorDAO.getInstancia().mostrarAutores(modelo);
+            AutorDAO.getInstancia().mostrarAutores(modelo);
         } catch (SQLException ex) {
-             JOptionPane.showMessageDialog(null,ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
 
@@ -80,8 +81,8 @@ public class DialogBuscarAutor extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
-        String nombre=txtNombre.getText();
-        
+        String nombre = txtNombre.getText();
+
         try {
             AutorDAO.getInstancia().mostrarPorNombre(nombre, modelo);
         } catch (SQLException ex) {
@@ -90,7 +91,7 @@ public class DialogBuscarAutor extends javax.swing.JDialog {
     }//GEN-LAST:event_txtNombreKeyReleased
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        String nombre=txtNombre.getText();
+        String nombre = txtNombre.getText();
         try {
             AutorDAO.getInstancia().mostrarPorNombre(nombre, modelo);
         } catch (SQLException ex) {
@@ -99,23 +100,22 @@ public class DialogBuscarAutor extends javax.swing.JDialog {
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTodosActionPerformed
-       try {
-               AutorDAO.getInstancia().mostrarAutores(modelo);
+        try {
+            AutorDAO.getInstancia().mostrarAutores(modelo);
         } catch (SQLException ex) {
-             JOptionPane.showMessageDialog(null,ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }//GEN-LAST:event_btnTodosActionPerformed
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
         int i = Tabla.getSelectedRow();
-        if(i!=-1)
-        {
+        if (i != -1) {
             autorSelec.setIdautor(modelo.getValueAt(i, 0).toString());
             autorSelec.setNombre(modelo.getValueAt(i, 1).toString());
             this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Debes Seleccionar un elemento");
         }
-        else
-             JOptionPane.showMessageDialog(null, "Debes Seleccionar un elemento");
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     /**

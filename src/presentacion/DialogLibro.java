@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class DialogLibro extends javax.swing.JDialog {
+
     DefaultTableModel modeloLibro = new DefaultTableModel();
     DefaultTableModel modeloAutor = new DefaultTableModel();
 
@@ -16,31 +17,30 @@ public class DialogLibro extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(null);
         desHabilitar();
-        String titulos[]={"idautor","nombre"};
+        String titulos[] = {"idautor", "nombre"};
         modeloAutor.setColumnIdentifiers(titulos);
-       try {
-               LibroDAO.getInstancia().mostrarLibros(modeloLibro);
+        try {
+            LibroDAO.getInstancia().mostrarLibros(modeloLibro);
         } catch (SQLException ex) {
-             JOptionPane.showMessageDialog(null,ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
-    
-    public void habilitar(){
+
+    public void habilitar() {
         btnActualizar.setEnabled(true);
         btnEliminar.setEnabled(true);
         btnGuardar.setEnabled(false);
         btnConsultar.setEnabled(false);
     }
-    
-     
-    public void desHabilitar(){
+
+    public void desHabilitar() {
         btnActualizar.setEnabled(false);
         btnEliminar.setEnabled(false);
         btnGuardar.setEnabled(true);
         btnConsultar.setEnabled(true);
-    }     
-    
-    public void limpiarEntradas(){
+    }
+
+    public void limpiarEntradas() {
         txtIdlibro.setText("");
         txtTitulo.setText("");
         txtIsbn.setText("");
@@ -48,11 +48,10 @@ public class DialogLibro extends javax.swing.JDialog {
         txtPaginas.setText("");
         txtIdautor.setText("");
         txtNombre.setText("");
-        String titulos[]={"idautor","nombre"};
+        String titulos[] = {"idautor", "nombre"};
         modeloAutor.setDataVector(null, titulos);
         txtIdlibro.requestFocus();
-    }    
-    
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -225,29 +224,29 @@ public class DialogLibro extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-         try{
-             String idlibro=txtIdlibro.getText();
-             String titulo=txtTitulo.getText();
-             String isbn=txtIsbn.getText();
-             String editorial=txtEditorial.getText();
-             int paginas=Integer.parseInt(txtPaginas.getText());
-             Libro libro=new Libro(idlibro,titulo,isbn,editorial,paginas);
-             int nfilas = modeloAutor.getRowCount();
+        try {
+            String idlibro = txtIdlibro.getText();
+            String titulo = txtTitulo.getText();
+            String isbn = txtIsbn.getText();
+            String editorial = txtEditorial.getText();
+            int paginas = Integer.parseInt(txtPaginas.getText());
+            Libro libro = new Libro(idlibro, titulo, isbn, editorial, paginas);
+            int nfilas = modeloAutor.getRowCount();
 
-             for (int i = 0; i < nfilas; i++) {
-                    String idautor = modeloAutor.getValueAt(i, 0).toString();
-                    String nombre = modeloAutor.getValueAt(i, 1).toString();
-                    Autor autor=new Autor(idautor,nombre);
-                    DetalleLibro det=new DetalleLibro(autor);
-                    libro.registrarDetalleLibro(det);
-             }
-             LibroDAO.getInstancia().insertar(libro);
-             LibroDAO.getInstancia().mostrarLibros(modeloLibro);
-             JOptionPane.showMessageDialog(null, "Libro registrado");
-         }catch(SQLException ex){
-                JOptionPane.showMessageDialog(null, ex.getMessage());
-         }
-         limpiarEntradas();
+            for (int i = 0; i < nfilas; i++) {
+                String idautor = modeloAutor.getValueAt(i, 0).toString();
+                String nombre = modeloAutor.getValueAt(i, 1).toString();
+                Autor autor = new Autor(idautor, nombre);
+                DetalleLibro det = new DetalleLibro(autor);
+                libro.registrarDetalleLibro(det);
+            }
+            LibroDAO.getInstancia().insertar(libro);
+            LibroDAO.getInstancia().mostrarLibros(modeloLibro);
+            JOptionPane.showMessageDialog(null, "Libro registrado");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+        limpiarEntradas();
 
     }//GEN-LAST:event_btnGuardarActionPerformed
 
@@ -260,63 +259,60 @@ public class DialogLibro extends javax.swing.JDialog {
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
         // TODO add your handling code here:
         String idlibro = txtIdlibro.getText();
-        if(idlibro.equalsIgnoreCase(""))
-             JOptionPane.showMessageDialog(null, "POR FAVOR INGRESA idlibro");
-        else
-        {
+        if (idlibro.equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(null, "POR FAVOR INGRESA idlibro");
+        } else {
             try {
                 Libro x = LibroDAO.getInstancia().buscarLibro(idlibro);
-                if(x!=null) {
+                if (x != null) {
                     txtIdlibro.setText(x.getIdlibro());
                     txtTitulo.setText(x.getTitulo());
                     txtIsbn.setText(x.getIsbn());
                     txtEditorial.setText(x.getEditorial());
                     txtPaginas.setText(String.valueOf(x.getPaginas()));
-                    ListaDetalleLibro LD=x.getLD();
+                    ListaDetalleLibro LD = x.getLD();
                     modeloAutor.getDataVector().removeAllElements();
-                    for(int i=0;i<LD.getN();i++)
-                    {
-                      DetalleLibro det = LD.getElemento(i);
-                      String idautor=det.getAutor().getIdautor();
-                      String nombre =det.getAutor().getNombre();
-                      String fila[]={idautor,nombre};
-                      modeloAutor.addRow(fila);
+                    for (int i = 0; i < LD.getN(); i++) {
+                        DetalleLibro det = LD.getElemento(i);
+                        String idautor = det.getAutor().getIdautor();
+                        String nombre = det.getAutor().getNombre();
+                        String fila[] = {idautor, nombre};
+                        modeloAutor.addRow(fila);
                     }
                     habilitar();
+                } else {
+                    JOptionPane.showMessageDialog(null, "El idlibro no existe");
                 }
-                else
-                     JOptionPane.showMessageDialog(null,"El idlibro no existe");
-            }catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null,ex.getMessage());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnConsultarActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        try{
-             String idlibro=txtIdlibro.getText();
-             String titulo=txtTitulo.getText();
-             String isbn=txtIsbn.getText();
-             String editorial=txtEditorial.getText();
-             int paginas=Integer.parseInt(txtPaginas.getText());
-             Libro libro=new Libro(idlibro,titulo,isbn,editorial,paginas);
-             int nfilas = modeloAutor.getRowCount();
+        try {
+            String idlibro = txtIdlibro.getText();
+            String titulo = txtTitulo.getText();
+            String isbn = txtIsbn.getText();
+            String editorial = txtEditorial.getText();
+            int paginas = Integer.parseInt(txtPaginas.getText());
+            Libro libro = new Libro(idlibro, titulo, isbn, editorial, paginas);
+            int nfilas = modeloAutor.getRowCount();
 
-             for (int i = 0; i < nfilas; i++) {
-                    String idautor = modeloAutor.getValueAt(i, 0).toString();
-                    String nombre = modeloAutor.getValueAt(i, 1).toString();
-                    Autor autor=new Autor(idautor,nombre);
-                    DetalleLibro det=new DetalleLibro(autor);
-                    libro.registrarDetalleLibro(det);
-             }
-             LibroDAO.getInstancia().actualizar(libro);
-             LibroDAO.getInstancia().mostrarLibros(modeloLibro);
-             JOptionPane.showMessageDialog(null, "Libro modificado");
-         }catch(SQLException ex){
-                JOptionPane.showMessageDialog(null, ex.getMessage());
-         }
-        
-        
+            for (int i = 0; i < nfilas; i++) {
+                String idautor = modeloAutor.getValueAt(i, 0).toString();
+                String nombre = modeloAutor.getValueAt(i, 1).toString();
+                Autor autor = new Autor(idautor, nombre);
+                DetalleLibro det = new DetalleLibro(autor);
+                libro.registrarDetalleLibro(det);
+            }
+            LibroDAO.getInstancia().actualizar(libro);
+            LibroDAO.getInstancia().mostrarLibros(modeloLibro);
+            JOptionPane.showMessageDialog(null, "Libro modificado");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
         limpiarEntradas();
         desHabilitar();
 
@@ -324,19 +320,18 @@ public class DialogLibro extends javax.swing.JDialog {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-        try{
-            int resp= JOptionPane.showConfirmDialog(this,"Deseas Eliminarlo ","Eliminar Dato",JOptionPane.YES_NO_OPTION );
-            if( resp == JOptionPane.YES_OPTION )
-            {
-                String idautor=txtIdlibro.getText();
+        try {
+            int resp = JOptionPane.showConfirmDialog(this, "Deseas Eliminarlo ", "Eliminar Dato", JOptionPane.YES_NO_OPTION);
+            if (resp == JOptionPane.YES_OPTION) {
+                String idautor = txtIdlibro.getText();
                 LibroDAO.getInstancia().eliminar(idautor);
-                JOptionPane.showMessageDialog(this,"Registro eliminado");
+                JOptionPane.showMessageDialog(this, "Registro eliminado");
                 LibroDAO.getInstancia().mostrarLibros(modeloLibro);
+            } else {
+                JOptionPane.showMessageDialog(null, "El idlibro no existe");
             }
-            else
-                JOptionPane.showMessageDialog(null,"El idlibro no existe");
         } catch (SQLException ex) {
-              JOptionPane.showMessageDialog(null,ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
         limpiarEntradas();
         desHabilitar();
@@ -345,12 +340,12 @@ public class DialogLibro extends javax.swing.JDialog {
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         // TODO add your handling code here:
         dispose();
-        
+
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnBuscarAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarAutorActionPerformed
         // TODO add your handling code here:
-        DialogBuscarAutor f=new DialogBuscarAutor();
+        DialogBuscarAutor f = new DialogBuscarAutor();
         f.setVisible(true);
         Autor autor = f.autorSelec;
         txtIdautor.setText(autor.getIdautor());
@@ -359,21 +354,21 @@ public class DialogLibro extends javax.swing.JDialog {
 
     private void btnAgregarAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAutorActionPerformed
         // TODO add your handling code here:
-         String idautor=txtIdautor.getText();
-         String nombre=txtNombre.getText();
-         String fila[]={idautor,nombre};
-         
-         modeloAutor.addRow(fila);
-         txtIdautor.setText("");
-         txtNombre.setText("");
-         txtIdautor.requestFocus();
+        String idautor = txtIdautor.getText();
+        String nombre = txtNombre.getText();
+        String fila[] = {idautor, nombre};
+
+        modeloAutor.addRow(fila);
+        txtIdautor.setText("");
+        txtNombre.setText("");
+        txtIdautor.requestFocus();
     }//GEN-LAST:event_btnAgregarAutorActionPerformed
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         // TODO add your handling code here:
-         txtIdautor.setText("");
-         txtNombre.setText("");
-         txtIdautor.requestFocus();
+        txtIdautor.setText("");
+        txtNombre.setText("");
+        txtIdautor.requestFocus();
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnEliminarAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAutorActionPerformed
@@ -384,8 +379,9 @@ public class DialogLibro extends javax.swing.JDialog {
             if (rpta == JOptionPane.OK_OPTION) {
                 modeloAutor.removeRow(i);
             }
-        } else
+        } else {
             JOptionPane.showMessageDialog(null, "Seleccione un autor", "Eliminar", 1);
+        }
     }//GEN-LAST:event_btnEliminarAutorActionPerformed
 
     /**
